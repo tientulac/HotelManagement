@@ -1,0 +1,32 @@
+﻿@{
+    ViewBag.Title = "Danh Sách Phòng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.DiaChi = 1;
+}
+
+@using QuanLyKhachSan.Models.ViewModels
+@model List<PhongView>
+
+<h3>Danh Sách Phòng</h3>
+<div class="container">
+    @foreach (PhongView pv in @Model)
+    {
+        <div class="phong">
+            <img class="img-rounded img-phong" src=@pv.DuongDanAnh alt="Image" width="250" height="149" />
+            <label>Loại Phòng: @pv.TenLoai</label><br />
+            <label>Tên Phòng: @pv.TenPhong</label><br />
+            <label>Diện Tích: @pv.DienTich m&sup2;</label><br />
+            <label style="color:@(pv.ConTrong ? "green": "red")">@(pv.ConTrong ? "Còn phòng": "Phòng đã được đặt !")</label><br />
+            <span class="gia-thue">@pv.GiaThue.000 đ/ngày</span><br />
+            @if (pv.ConTrong)
+            {
+                <input type="button" class="btn-dat-phong" onclick="location.href = '/DatPhong/DatPhong/@pv.MaPhong'" value="ĐẶT PHÒNG" />
+
+            }
+            else
+            {
+                <input type="button" class="btn btn-danger" onclick="javascript:void(0)" value="PHÒNG ĐÃ ĐƯỢC ĐẶT" />
+            }
+        </div>
+    }
+</div>

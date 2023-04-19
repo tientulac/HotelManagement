@@ -1,0 +1,42 @@
+﻿@{
+    ViewBag.Title = "Loại Phòng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.DiaChi = 1;
+}
+
+@using QuanLyKhachSan.Models.Entities
+@model List<Phong>
+
+@if (ViewBag.Success == 1)
+{
+    <h3>@ViewBag.TenLoai</h3>
+    <div class="container">
+        <img style="padding-bottom: 16px" src=@ViewBag.DuongDanAnh alt="Image" />
+        <label id="thong-tin">@ViewBag.GhiChu</label>
+        <br />
+        <h3>Danh Sách Phòng</h3>
+        @foreach (Phong p in Model)
+        {
+            <div class="phong">
+                <img class="img-rounded img-phong" src=@ViewBag.DuongDanAnh alt="Image" width="250" height="149" /><br>
+                <label>Tên Phòng: @p.TenPhong</label><br />
+                <label>Diện Tích: @p.DienTich m&sup2;</label><br />
+                <label style="color:@(p.ConTrong ? "green": "red")">@(p.ConTrong ? "Còn phòng": "Phòng đã được đặt !")</label><br />
+                <span class="gia-thue">@p.GiaThue.000 đ/ngày</span><br />
+                @if (p.ConTrong)
+                {
+                    <input type="button" class="btn-dat-phong" onclick="location.href = '/DatPhong/DatPhong/@p.MaPhong'" value="ĐẶT PHÒNG" />
+
+                }
+                else
+                {
+                    <input type="button" class="btn btn-danger" onclick="javascript:void(0)" value="PHÒNG ĐÃ ĐƯỢC ĐẶT" />
+                }
+            </div>
+        }
+    </div>
+}
+else
+{
+    <h3>Loại Phòng Ko Tồn Tại!</h3>
+}
