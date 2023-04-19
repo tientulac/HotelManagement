@@ -41,7 +41,10 @@
                         <td>@tk.SoDienThoai</td>
                         <td>@tk.Email</td>
                         <td>@laAdmin</td>
-                        <td><a href="/Admin/SuaTaiKhoan/@tk.TenTaiKhoan">Sửa</a>&nbsp;|&nbsp;<a href="#" data-toggle="modal" data-target="#myModal" onclick="myFunction('/Admin/XoaTaiKhoan/@tk.TenTaiKhoan')">Xóa</a></td>
+                        <td class="row">
+                            <a href="/Admin/SuaTaiKhoan/@tk.TenTaiKhoan" class="btn btn-warning btn-sm"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                            <a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#myModal" onclick="myFunction('/Admin/XoaTaiKhoan/@tk.TenTaiKhoan')"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                        </td>
                     </tr>
                 }
             }
@@ -50,7 +53,7 @@
 </div>
 @if (ViewBag.SoTrang > 1)
 {
-    <div class="trang">
+    <div class="trang" style="margin-top: 5%;">
         <ul class="pagination">
             <li><a href="/Admin/DSTaiKhoan/1">«</a></li>
             @for (int i = 1; i <= ViewBag.SoTrang; i++)

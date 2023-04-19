@@ -27,8 +27,14 @@ namespace QuanLyKhachSan.Controllers
             int Trang = 1;
             try
             {
-                string id = RouteData.Values["id"].ToString();
-                Trang = Convert.ToInt16(id);
+                if (RouteData.Values["id"] != null)
+                {
+                    Trang = Convert.ToInt16(RouteData.Values["id"].ToString());
+                }
+                else
+                {
+                    Trang = 1;
+                }
                 if (Trang > SoTrang) Trang = SoTrang;
             }
             catch (Exception e) { }
@@ -65,8 +71,14 @@ namespace QuanLyKhachSan.Controllers
             int Trang = 1;
             try
             {
-                string id = RouteData.Values["id"].ToString();
-                Trang = Convert.ToInt16(id);
+                if (RouteData.Values["id"] != null)
+                {
+                    Trang = Convert.ToInt16(RouteData.Values["id"].ToString());
+                }
+                else
+                {
+                    Trang = 1;
+                }
                 if (Trang > SoTrang) Trang = SoTrang;
             }
             catch (Exception e) { }
@@ -89,8 +101,15 @@ namespace QuanLyKhachSan.Controllers
             int Trang = 1;
             try
             {
-                string id = RouteData.Values["id"].ToString();
-                Trang = Convert.ToInt16(id);
+                if (RouteData.Values["id"] != null)
+                {
+                    Trang = Convert.ToInt16(RouteData.Values["id"].ToString());
+                }
+                else
+                {
+                    Trang = 1;
+                }
+
                 if (Trang > SoTrang) Trang = SoTrang;
             }
             catch (Exception e) { }

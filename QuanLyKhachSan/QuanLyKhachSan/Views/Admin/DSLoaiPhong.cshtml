@@ -27,7 +27,7 @@
             <th>Mã Loại</th>
             <th>Tên Loại</th>
             <th>Ghi Chú</th>
-            <th>Đường Dẫn</th>
+            <th style="text-align: center">Ảnh</th>
             <th>Thao Tác</th>
         </tr>
     </thead>
@@ -42,8 +42,13 @@
                     <td>@lp.MaLoai</td>
                     <td>@lp.TenLoai</td>
                     <td>@lp.GhiChu</td>
-                    <td>@lp.DuongDanAnh</td>
-                    <td><a href="/Admin/SuaLoaiPhong/@lp.MaLoai">Sửa</a>&nbsp;|&nbsp;<a href="#" data-toggle="modal" data-target="#myModal" onclick="myFunction('/Admin/XoaLoaiPhong/@lp.MaLoai')">Xóa</a></td>
+                    <td style="text-align: center">
+                        <img src="@lp.DuongDanAnh" style="width: 50px; height: 50px;" alt="Alternate Text" />
+                    </td>
+                    <td class="row">
+                        <a href="/Admin/SuaLoaiPhong/@lp.MaLoai" class="btn btn-warning btn-sm"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                        <a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#myModal" onclick="myFunction('/Admin/XoaLoaiPhong/@lp.MaLoai')"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                    </td>
                 </tr>
             }
         }
