@@ -51,14 +51,15 @@ namespace QuanLyKhachSan.Models.Functions
             {
                 return -1;
             }
-            db.DatPhongs.Remove(dbEntry);
-            db.SaveChanges();
             var _phong = db.Phongs.Where(x => x.MaPhong == dbEntry.MaPhong);
             if (_phong != null)
             {
-                _phong.FirstOrDefault().ConTrong = false;
+                _phong.FirstOrDefault().ConTrong = true;
                 db.SaveChanges();
             }
+            db.DatPhongs.Remove(dbEntry);
+            db.SaveChanges();
+
             return MaDatPhong;
         }
     }
