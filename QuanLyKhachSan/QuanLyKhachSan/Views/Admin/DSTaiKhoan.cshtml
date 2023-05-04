@@ -22,7 +22,7 @@
                 <th>Họ Tên</th>
                 <th>Số Điện Thoại</th>
                 <th>Email</th>
-                <th>Là Admin</th>
+                <th>Admin</th>
                 <th>Thao Tác</th>
             </tr>
         </thead>
@@ -40,7 +40,18 @@
                         <td>@tk.HoTen</td>
                         <td>@tk.SoDienThoai</td>
                         <td>@tk.Email</td>
-                        <td>@laAdmin</td>
+                        @if (tk.LaAdmin)
+                        {
+                            <td style="color: forestgreen; font-weight: bold">
+                                <i class="fa fa-check" aria-hidden="true"></i>
+
+                            </td>
+                        }
+                        else
+                        {
+                            <td style="color: red; font-weight: bold">X</td>
+
+                        }
                         <td class="row">
                             <a href="/Admin/SuaTaiKhoan/@tk.TenTaiKhoan" class="btn btn-warning btn-sm"><i class="fa fa-pencil" aria-hidden="true"></i></a>
                             <a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#myModal" onclick="myFunction('/Admin/XoaTaiKhoan/@tk.TenTaiKhoan')"><i class="fa fa-trash" aria-hidden="true"></i></a>

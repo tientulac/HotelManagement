@@ -22,7 +22,28 @@ namespace QuanLyKhachSan.Models.Functions
 
         public int Insert(DatPhong model)
         {
+            model.TrangThai = 0;
+            model.PhuongThucThanhToan = 0;
             db.DatPhongs.Add(model);
+            db.SaveChanges();
+            return model.MaDatPhong;
+        }
+
+        public int ThanhToan(DatPhong model)
+        {
+            DatPhong dbEntry = db.DatPhongs.Find(model.MaDatPhong);
+            if (dbEntry == null)
+            {
+                return -1;
+            }
+            dbEntry.MaDatPhong = model.MaDatPhong;
+            dbEntry.TenTaiKhoan = model.TenTaiKhoan;
+            dbEntry.NgayDat = model.NgayDat;
+            dbEntry.NgayDen = model.NgayDen;
+            dbEntry.NgayTra = model.NgayTra;
+            dbEntry.ThanhTien = model.ThanhTien;
+            dbEntry.TrangThai = 1;
+            dbEntry.PhuongThucThanhToan = 1;
             db.SaveChanges();
             return model.MaDatPhong;
         }

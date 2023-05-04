@@ -121,6 +121,7 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\CaNhanController.cs" />
     <Compile Include="Controllers\DatPhongController.cs" />
+    <Compile Include="Controllers\HomePageController.cs" />
     <Compile Include="Controllers\TrangChuController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -745,6 +746,9 @@
     <Content Include="Content\assets\sass\atlantis\_variables.scss" />
     <Content Include="Content\assets\urotaxi-html\css\style.css.map" />
     <Content Include="Content\assets\urotaxi-html\css\style.scss" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\HomePage\Index.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

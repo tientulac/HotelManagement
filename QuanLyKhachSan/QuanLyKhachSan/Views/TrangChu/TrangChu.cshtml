@@ -1,12 +1,12 @@
 ﻿@{
     ViewBag.Title = "Trang Chủ";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.DiaChi = 0;
 }
 
 @using QuanLyKhachSan.Models.Entities;
 @model List<LoaiPhong>
 
-<h3>Đặt Phòng Khách Sạn</h3>
 <div class="container">
     @foreach (LoaiPhong lp in @Model)
     {

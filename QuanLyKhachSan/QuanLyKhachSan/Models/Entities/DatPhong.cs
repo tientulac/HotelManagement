@@ -32,6 +32,8 @@ namespace QuanLyKhachSan.Models.Entities
         public string DichVu { get; set; }
 
         public int? ThanhTien { get; set; }
+        public int? PhuongThucThanhToan { get; set; }
+        public int? TrangThai { get; set; }
 
         public virtual Phong Phong { get; set; }
 

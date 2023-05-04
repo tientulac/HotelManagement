@@ -22,6 +22,7 @@
                 <th>Mã Loại</th>
                 <th>Diện Tích</th>
                 <th>Giá Thuê</th>
+                <th>Còn trống</th>
                 <th>Thao Tác</th>
             </tr>
         </thead>
@@ -38,6 +39,18 @@
                         <td>@p.MaLoai</td>
                         <td>@p.DienTich</td>
                         <td>@p.GiaThue</td>
+                        @if (p.ConTrong)
+                        {
+                            <td style="color: forestgreen; font-weight: bold">
+                                <i class="fa fa-check" aria-hidden="true"></i>
+
+                            </td>
+                        }
+                        else
+                        {
+                            <td style="color: red; font-weight: bold">X</td>
+
+                        }
                         <td class="row">
                             <a href="/Admin/SuaPhong/@p.MaPhong" class="btn btn-warning btn-sm"><i class="fa fa-pencil" aria-hidden="true"></i></a>
                             <a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#myModal" onclick="myFunction('/Admin/XoaPhong/@p.MaPhong')"><i class="fa fa-trash" aria-hidden="true"></i></a>

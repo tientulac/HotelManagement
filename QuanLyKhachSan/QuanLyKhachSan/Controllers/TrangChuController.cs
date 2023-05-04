@@ -33,6 +33,7 @@ namespace QuanLyKhachSan.Controllers
                 }
             }
             List<LoaiPhong> list = db.LoaiPhongs.ToList();
+            ViewBag.DiaChi = 5;
             return View(list);
         }
 

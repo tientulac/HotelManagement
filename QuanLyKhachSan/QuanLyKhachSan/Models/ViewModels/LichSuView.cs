@@ -15,6 +15,10 @@ namespace QuanLyKhachSan.Models.ViewModels
         public string DichVu { get; set; }
         public int? ThanhTien { get; set; }
         public bool CoTheHuy { get; set; }
-
+        public int TongTien { get; set; }
+        public int PhuongThucThanhToan { get; set; }
+        public string PhuongThucThanhToanString { get; set; }
+        public int TrangThai { get; set; }
+        public string TrangThaiString { get; set; }
     }
 }

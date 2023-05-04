@@ -23,6 +23,7 @@ namespace QuanLyKhachSan.Models.Functions
 
         public string Insert(Phong model)
         {
+            model.ConTrong = true;
             db.Phongs.Add(model);
             db.SaveChanges();
             return model.MaPhong;
