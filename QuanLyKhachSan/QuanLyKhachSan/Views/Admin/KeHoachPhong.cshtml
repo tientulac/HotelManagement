@@ -1,0 +1,217 @@
+﻿@{
+    ViewBag.Title = "KeHoachPhong";
+    Layout = "~/Views/SharedAdmin/_Layout.cshtml";
+}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<h2>Xem kế hoạch phòng</h2>
+
+<section class="content-header" >
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-md-6">
+            </div>
+            <div class="col-md-6">
+                <button class="btn btn-info btn-sm" style="float: right;margin-right: 5px;" onclick="search()">
+                    <i class="fas fa-search"></i> Tìm kiếm
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content cus-body ">
+    <div class="card">
+        <div class="card-body">
+            <div class="row ">
+                <div class="col-md-3">
+                    <label class="col-md-12 " style="margin-top: 10px;">Tài khoản</label>
+                    <input class="form-control" placeholder="Nhập..." type="text" id="TenTaiKhoan"/>
+                </div>
+                <div class="col-md-3">
+                    <label class="col-md-12 " style="margin-top: 10px;">Mã phòng</label>
+                    <input class="form-control" placeholder="Nhập..." type="text" id="MaPhong"/>
+                </div>
+                <div class="col-md-3">
+                    <label class="col-md-12 " style="margin-top: 10px;">Ngày đặt</label>
+                    <input class="form-control" placeholder="Nhập..." type="date" id="NgayDat"/>
+                </div>
+                <div class="col-md-3">
+                    <label class="col-md-12 " style="margin-top: 10px;">Ngày đến</label>
+                    <input class="form-control" placeholder="Nhập..." type="date" id="NgayDen"/>
+                </div>
+                <div class="col-md-3">
+                    <label class="col-md-12 " style="margin-top: 10px;">Ngày trả</label>
+                    <input class="form-control" placeholder="Nhập..." type="date" id="NgayTra"/>
+                </div>
+                <div class="col-md-3">
+                    <label class="col-md-12 " style="margin-top: 10px;">Phương thức thanh toán</label>
+                    <select class="form-control" id="PhuongThucThanhToan">
+                        <option value="null">Chọn phương thức</option>
+                        <option value="1">Tiền mặt</option>
+                        <option value="2">Chuyển khoản</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="col-md-12 " style="margin-top: 10px;">Trạng thái</label>
+                    <select class="form-control" id="TrangThai">
+                        <option value="null">Chọn trạng thái</option>
+                        <option value="0">Chờ thanh toán</option>
+                        <option value="1">Đã thanh toán</option>
+                        <option value="2">Đã hủy</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="dataBookRoom"></div>
+
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Thông Báo</h4>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn muốn hủy đặt không?</p>
+            </div>
+            <div class="modal-footer">
+                <input type="button" style="width:70px" class="btn btn-success" data-dismiss="modal" value="Có" id="btnOK" onclick="btnOKClick()" />
+                <input type="button" style="width:70px" class="btn btn-default" data-dismiss="modal" value="Không" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var link;
+    function myFunction(s) {
+        link = s;
+    }
+    function btnOKClick() {
+        window.location = link;
+    }
+
+    $(document).ready(function () {
+        var req = {
+            NgayDat: null,
+            NgayDen: null,
+            NgayHuy: null,
+            NgayTra: null,
+            TrangThai: null,
+            PhuongThucThanhToan: null
+        };
+        postData('/Admin/KeHoachPhongFilter', req)
+            .then((result) => {
+                if (result.success) {
+                    var textData = '';
+                    result.data.forEach(x => {
+                        textData += `<tr>
+                            <td>${x.TenTaiKhoan}</td>
+                            <td>${x.MaPhong}</td>
+                            <td>${x.NgayDat}</td>
+                            <td>${x.NgayDen}</td>
+                            <td>${x.NgayTra}</td>
+                            <td>${x.DichVu}</td>
+                            <td>${x.ThanhTien}</td>
+                            <td>${x.TrangThaiString}</td>
+                            <td>${x.PhuongThucThanhToanString}</td>
+                            <td><a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#myModal" onclick="myFunction('/Admin/HuyKeHoachPhong/${x.MaDatPhong}')"><i class="fa fa-trash" aria-hidden="true"></i></a></td>
+                        </tr>`
+                    });
+                    $('#dataBookRoom').html(`
+                    <div class="col-md-12" style="margin-top: 20px;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Tài khoản</th>
+                                    <th scope="col">Mã phòng</th>
+                                    <th scope="col">Ngày đặt</th>
+                                    <th scope="col">Ngày đến</th>
+                                    <th scope="col">Ngày trả</th>
+                                    <th scope="col">Dịch vụ</th>
+                                    <th scope="col">Thành tiền</th>
+                                    <th scope="col">Trạng thái</th>
+                                    <th scope="col">Phuong Thức thanh toán</th>
+                                    <th scope="col">Hủy phòng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                `+
+                        textData
+                        + `
+                            </tbody>
+                        </table>
+                    </div>
+                    `)
+                }
+                else {
+                    toastr.warning('Failed !');
+                    $('.modal').modal('hide');
+                }
+            });
+    });
+
+    search = () => {
+        var req = {
+            TenTaiKhoan: $('#TenTaiKhoan').val(),
+            MaPhong: $('#MaPhong').val(),
+            NgayDat: $('#NgayDat').val(),
+            NgayDen: $('#NgayDen').val(),
+            NgayTra: $('#NgayTra').val(),
+            TrangThai: $('#TrangThai').val(),
+            PhuongThucThanhToan: $('#PhuongThucThanhToan').val(),
+        }
+        postData('/Admin/KeHoachPhongFilter', req)
+            .then((result) => {
+                if (result.success) {
+                    var textData = '';
+                    result.data.forEach(x => {
+                        textData += `<tr>
+                            <td>${x.TenTaiKhoan}</td>
+                            <td>${x.MaPhong}</td>
+                            <td>${x.NgayDat}</td>
+                            <td>${x.NgayDen}</td>
+                            <td>${x.NgayTra}</td>
+                            <td>${x.DichVu}</td>
+                            <td>${x.ThanhTien}</td>
+                            <td>${x.TrangThaiString}</td>
+                            <td>${x.PhuongThucThanhToanString}</td>
+                            <td><a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#myModal" onclick="myFunction('/Admin/XoaDichVuPhong/${x.IdDichVuPhong}')"><i class="fa fa-trash" aria-hidden="true"></i></a></td>
+                        </tr>`
+                    });
+                    $('#dataBookRoom').html(`
+                    <div class="col-md-12" style="margin-top: 20px;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Tài khoản</th>
+                                    <th scope="col">Mã phòng</th>
+                                    <th scope="col">Ngày đặt</th>
+                                    <th scope="col">Ngày đến</th>
+                                    <th scope="col">Ngày trả</th>
+                                    <th scope="col">Dịch vụ</th>
+                                    <th scope="col">Thành tiền</th>
+                                    <th scope="col">Trạng thái</th>
+                                    <th scope="col">Phuong Thức thanh toán</th>
+                                    <th scope="col">Hủy phòng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                `+
+                        textData
+                        + `
+                            </tbody>
+                        </table>
+                    </div>
+                    `)
+                }
+                else {
+                    toastr.warning('Failed !');
+                    $('.modal').modal('hide');
+                }
+            });
+    }
+</script>

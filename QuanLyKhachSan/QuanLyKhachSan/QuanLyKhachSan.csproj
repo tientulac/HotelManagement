@@ -129,6 +129,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Entities\DatPhong.cs" />
     <Compile Include="Models\Entities\DichVu.cs" />
+    <Compile Include="Models\Entities\DichVuPhong.cs" />
     <Compile Include="Models\Entities\LoaiPhong.cs" />
     <Compile Include="Models\Entities\ModelQLKS.cs" />
     <Compile Include="Models\Entities\Phong.cs" />
@@ -138,6 +139,9 @@
     <Compile Include="Models\Functions\HamLoaiPhong.cs" />
     <Compile Include="Models\Functions\HamPhong.cs" />
     <Compile Include="Models\Functions\HamTaiKhoan.cs" />
+    <Compile Include="Models\ViewModels\DatPhongViewModel.cs" />
+    <Compile Include="Models\ViewModels\DichVuPhongModel.cs" />
+    <Compile Include="Models\ViewModels\FilterModel.cs" />
     <Compile Include="Models\ViewModels\LichSuView.cs" />
     <Compile Include="Models\ViewModels\PhongView.cs" />
     <Compile Include="Models\ViewModels\TaiKhoanDangKyView.cs" />
@@ -749,6 +753,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\HomePage\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Admin\KeHoachPhong.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

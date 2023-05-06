@@ -17,6 +17,7 @@ namespace QuanLyKhachSan.Models.Entities
         public virtual DbSet<LoaiPhong> LoaiPhongs { get; set; }
         public virtual DbSet<Phong> Phongs { get; set; }
         public virtual DbSet<TaiKhoan> TaiKhoans { get; set; }
+        public virtual DbSet<DichVuPhong> DichVuPhongs { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

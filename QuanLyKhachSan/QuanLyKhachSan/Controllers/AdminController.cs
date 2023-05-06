@@ -89,6 +89,7 @@ namespace QuanLyKhachSan.Controllers
             ViewBag.STT = PhanTuDau;
             ViewBag.Trang = Trang;
             ViewBag.SoTrang = SoTrang;
+            ViewBag.ListDichVu = db.DichVus.ToList();
             return View(listMoiTrang);
         }
 
@@ -387,6 +388,117 @@ namespace QuanLyKhachSan.Controllers
                 return RedirectToAction("DSDichVu", "Admin");
             }
             return View(dv);
+        }
+
+        [HttpPost]
+        public ActionResult AddRoomService(DichVuPhong req)
+        {
+            if (ModelState.IsValid)
+            {
+                db.DichVuPhongs.Add(req);
+                db.SaveChanges();
+                return Json(new { success = true, data = req }, JsonRequestBehavior.AllowGet);
+            }
+            return Json(new { success = false, data = req }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public ActionResult GetServiceByRoom(string MaPhong)
+        {
+            var list = db.DichVuPhongs.Where(x => x.MaPhong.Equals(MaPhong));
+            var listModel = new List<DichVuPhongModel>();
+            if (list.Any())
+            {
+                listModel = (from a in list
+                             select new DichVuPhongModel()
+                             {
+                                 IdDichVuPhong = a.IdDichVuPhong,
+                                 MaDichVu = a.MaDichVu,
+                                 TenDichVu = db.DichVus.FirstOrDefault(x => x.MaDichVu.Equals(a.MaDichVu)).TenDichVu,
+                                 GiaDichVu = db.DichVus.FirstOrDefault(x => x.MaDichVu.Equals(a.MaDichVu)).GiaDichVu,
+                                 MaPhong = a.MaPhong,
+                             }).ToList();
+            }
+            return Json(new { success = true, data = listModel }, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult XoaDichVuPhong()
+        {
+            int id = Int32.Parse(RouteData.Values["id"].ToString());
+            db.DichVuPhongs.Remove(db.DichVuPhongs.FirstOrDefault(x => x.IdDichVuPhong == id));
+            db.SaveChanges();
+            return RedirectToAction("DSPhong", "Admin");
+        }
+
+        public ActionResult KeHoachPhong()
+        {
+            var listKH = db.DatPhongs.ToList();
+            ViewBag.ListKH = listKH;
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult KeHoachPhongFilter(FilterModel req)
+        {
+            var list = db.DatPhongs;
+            var listKH = (from a in list
+                          select new DatPhongViewModel()
+                          {
+                              MaDatPhong = a.MaDatPhong,
+                              TenTaiKhoan = a.TenTaiKhoan,
+                              MaPhong = a.MaPhong,
+                              NgayDat = a.NgayDat,
+                              NgayDen = a.NgayDen,
+                              NgayTra = a.NgayTra,
+                              DichVu = a.DichVu,
+                              ThanhTien = a.ThanhTien,
+                              TrangThai = a.TrangThai,
+                              PhuongThucThanhToan = a.PhuongThucThanhToan,
+                              PhuongThucThanhToanString = a.PhuongThucThanhToan == 0 ? "" : a.PhuongThucThanhToan == 1 ? "Thanh toán bằng tiền mặt" : "Thanh toán bằng chuyển khoản",
+                              TrangThaiString = a.TrangThai == 0 ? "Chờ thanh toán" : a.TrangThai == 1 ? "Đã thanh toán" : "Hủy đặt"
+                          }).ToList();
+            if (listKH.Any())
+            {
+                if (!String.IsNullOrEmpty(req.TenTaiKhoan))
+                {
+                    listKH = listKH.Where(x => x.TenTaiKhoan.ToLower().Contains(req.TenTaiKhoan.ToLower())).ToList();
+                }
+                if (!String.IsNullOrEmpty(req.MaPhong))
+                {
+                    listKH = listKH.Where(x => x.MaPhong.ToLower().Contains(req.MaPhong.ToLower())).ToList();
+                }
+                if (req.NgayDat != null)
+                {
+                    listKH = listKH.Where(x => x.NgayDat == req.NgayDat).ToList();
+                }
+                if (req.NgayDen != null)
+                {
+                    listKH = listKH.Where(x => x.NgayDen == req.NgayDen).ToList();
+                }
+                if (req.NgayTra != null)
+                {
+                    listKH = listKH.Where(x => x.NgayDen == req.NgayTra).ToList();
+                }
+                if (req.TrangThai != null)
+                {
+                    listKH = listKH.Where(x => x.TrangThai == req.TrangThai).ToList();
+                }
+                if (req.PhuongThucThanhToan != null)
+                {
+                    listKH = listKH.Where(x => x.PhuongThucThanhToan == req.PhuongThucThanhToan).ToList();
+                }
+            }
+            return Json(new { success = true, data = listKH }, JsonRequestBehavior.AllowGet);
+        }
+
+
+        public ActionResult HuyKeHoachPhong()
+        {
+            var MaDatPhong = Int32.Parse(RouteData.Values["id"].ToString());
+            var dp = db.DatPhongs.FirstOrDefault(x => x.MaDatPhong == MaDatPhong);
+            dp.TrangThai = 2;
+            db.SaveChanges();
+            return RedirectToAction("KeHoachPhong", "Admin");
         }
     }
 }

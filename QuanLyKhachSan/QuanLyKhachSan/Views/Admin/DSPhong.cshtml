@@ -54,6 +54,7 @@
                         <td class="row">
                             <a href="/Admin/SuaPhong/@p.MaPhong" class="btn btn-warning btn-sm"><i class="fa fa-pencil" aria-hidden="true"></i></a>
                             <a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#myModal" onclick="myFunction('/Admin/XoaPhong/@p.MaPhong')"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                            <a class="btn btn-success btn-sm" href="#" data-toggle="modal" data-target="#ServiceModal" onclick="openModalService('@p.MaPhong')"><i class="fa fa-bell-concierge"></i></a>
                         </td>
                     </tr>
                 }
@@ -61,6 +62,38 @@
         </tbody>
     </table>
 </div>
+
+<div class="modal fade" id="ServiceModal" tabindex="-1" role="dialog" aria-labelledby="ServiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Thêm dịch vụ cho phòng</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="form-inline">
+                    <div class="form-group">
+                        <select id="serviceSelected" style="width: 400px" class="form-select form-control">
+                            <option value="">Chọn dịch vụ</option>
+                            @foreach (var s in ViewBag.ListDichVu)
+                            {
+                                <option value="@s.MaDichVu">Tên: @s.TenDichVu - Giá: @s.GiaDichVu VNĐ</option>
+                            }
+                        </select>
+                    </div>
+                    <a href="javscript:void(0)" class="btn btn-primary mb-2" onclick="addService()">Xác nhận</a>
+                </form>
+                <div id="dataService"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @if (ViewBag.SoTrang > 1)
 {
     <div class="trang" style="margin-top: 5%;">
@@ -80,3 +113,110 @@
     </script>
 }
 @Html.Partial("~/Views/SharedAdmin/_HopThoaiXacNhan.cshtml")
+
+<script>
+    var ma_phong = 0;
+
+    getDataService = () => {
+        $.ajax({
+            url: '/Admin/GetServiceByRoom?MaPhong=' + ma_phong,
+            type: 'GET',
+            success: function (result) {
+                if (result.success) {
+                    var textData = '';
+                    result.data.forEach(x => {
+                        textData += `<tr>
+                            <td>${x.MaDichVu}</td>
+                            <td>${x.TenDichVu}</td>
+                            <td>${x.GiaDichVu}</td>
+                            <td><a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#myModal" onclick="myFunction('/Admin/XoaDichVuPhong/${x.IdDichVuPhong}')"><i class="fa fa-trash" aria-hidden="true"></i></a></td>
+                        </tr>`
+                    });
+                    $('#dataService').html(`
+                    <div class="col-md-12" style="margin-top: 20px;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Mã dịch vụ</th>
+                                    <th scope="col">Tên dịch vụ</th>
+                                    <th scope="col">Giá tiền (VNĐ)</th>
+                                    <th scope="col">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                `+
+                                    textData
+                                + `
+                            </tbody>
+                        </table>
+                    </div>
+                    `)
+                }
+                else {
+                    toastr.warning('Failed !');
+                    $('.modal').modal('hide');
+                }
+            }
+        });
+    }
+
+    openModalService = (ma) => {
+        ma_phong = ma;
+        getDataService();
+    }
+
+    addService = () => {
+        var req = {
+            MaDichVu: $('#serviceSelected').val(),
+            MaPhong: ma_phong,
+        }
+        postData('/Admin/AddRoomService', req)
+            .then((data) => {
+                if (data.success) {
+                    $.ajax({
+                        url: '/Admin/GetServiceByRoom?MaPhong=' + ma_phong,
+                        type: 'GET',
+                        success: function (result) {
+                            if (result.success) {
+                                var textData = '';
+                                result.data.forEach(x => {
+                                    textData += `<tr>
+                            <td>${x.MaDichVu}</td>
+                            <td>${x.TenDichVu}</td>
+                            <td>${x.GiaDichVu}</td>
+                            <td><a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#myModal" onclick="myFunction('/Admin/XoaDichVuPhong/${x.IdDichVuPhong}')"><i class="fa fa-trash" aria-hidden="true"></i></a></td>
+                        </tr>`
+                                });
+                                $('#dataService').html(`
+                    <div class="col-md-12" style="margin-top: 20px;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Mã dịch vụ</th>
+                                    <th scope="col">Tên dịch vụ</th>
+                                    <th scope="col">Giá tiền (VNĐ)</th>
+                                    <th scope="col">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                `+
+                                    textData
+                                    + `
+                            </tbody>
+                        </table>
+                    </div>
+                    `)
+                            }
+                            else {
+                                toastr.warning('Failed !');
+                                $('.modal').modal('hide');
+                            }
+                        }
+                    });                }
+                else {
+                    toastr.warning('Failed !');
+                    $('.modal').modal('hide');
+                }
+            });
+    }
+</script>
