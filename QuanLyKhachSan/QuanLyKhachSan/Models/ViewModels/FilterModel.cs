@@ -9,6 +9,7 @@ namespace QuanLyKhachSan.Models.ViewModels
     {
         public string TenTaiKhoan { get; set; }
         public string MaPhong { get; set; }
+        public string TenPhong { get; set; }
         public DateTime? NgayDat { get; set; }
         public DateTime? NgayDen { get; set; }
         public DateTime? NgayTra { get; set; }

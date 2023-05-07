@@ -19,5 +19,8 @@ namespace QuanLyKhachSan.Models.ViewModels
         public int? PhuongThucThanhToan { get; set; }
         public string PhuongThucThanhToanString { get; set; }
         public string TrangThaiString { get; set; }
+        public string NgayDatString { get; set; }
+        public string NgayDenString { get; set; }
+        public string NgayTraString { get; set; }
     }
 }

@@ -33,7 +33,7 @@
             <br /><br />
             <label>Bạn Muốn Đặt Những Dịch Vụ Nào?</label>
             <br />
-            @foreach (DichVu dv in (List<DichVu>)ViewBag.DSDichVu)
+            @foreach (var dv in @ViewBag.DSDichVu)
             {
                 <label>@dv.TenDichVu: @dv.GiaDichVu.000 đ &nbsp;</label>
                 <input type="checkbox" name="@dv.MaDichVu" />

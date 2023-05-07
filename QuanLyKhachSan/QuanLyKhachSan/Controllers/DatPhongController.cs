@@ -58,10 +58,25 @@ namespace QuanLyKhachSan.Controllers
                 return RedirectToAction("DangNhap", "CaNhan");
             }
             var listDV = db.DichVus.ToList();
-            ViewBag.DSDichVu = listDV;
             string MaPhong = (string)RouteData.Values["id"];
             var phong = db.Phongs.Where(m => m.MaPhong == MaPhong).First();
             var loaiPhong = db.LoaiPhongs.Where(m => m.MaLoai == phong.MaLoai).First();
+            //ListDichVu
+            var listDVP = db.DichVuPhongs.Where(x => x.MaPhong.Equals(MaPhong));
+            var listModel = new List<DichVuPhongModel>();
+            if (listDVP.Any())
+            {
+                listModel = (from a in listDVP
+                             select new DichVuPhongModel()
+                             {
+                                 IdDichVuPhong = a.IdDichVuPhong,
+                                 MaDichVu = a.MaDichVu,
+                                 TenDichVu = db.DichVus.FirstOrDefault(x => x.MaDichVu.Equals(a.MaDichVu)).TenDichVu,
+                                 GiaDichVu = db.DichVus.FirstOrDefault(x => x.MaDichVu.Equals(a.MaDichVu)).GiaDichVu,
+                                 MaPhong = a.MaPhong,
+                             }).ToList();
+            }
+            ViewBag.DSDichVu = listModel;
             ViewBag.DuongDanAnh = loaiPhong.DuongDanAnh;
             ViewBag.TenLoai = loaiPhong.TenLoai;
             return View(phong);
@@ -95,10 +110,10 @@ namespace QuanLyKhachSan.Controllers
             dateNgayDen = Convert.ToDateTime(NgayDen);
             dateNgayTra = dateNgayDen.AddDays(SoNgayThue);
             var kiemTraPhongBiDatChua = db.DatPhongs.
-                Where(m => m.MaPhong == MaPhong && !(m.NgayDen >= dateNgayTra || m.NgayTra <= dateNgayDen)).ToList();
+                Where(m => m.MaPhong == MaPhong && !(m.NgayDen >= dateNgayTra || m.NgayTra <= dateNgayDen) && m.TrangThai != 2).ToList();
             if (kiemTraPhongBiDatChua.Count > 0)
             {
-                var listDaBiDat = db.DatPhongs.Where(m => m.NgayDen < dateNgayTra && m.NgayTra > dateNgayDen).Select(m => m.MaPhong);
+                var listDaBiDat = db.DatPhongs.Where(m => m.NgayDen < dateNgayTra && m.NgayTra > dateNgayDen && m.TrangThai != 2).Select(m => m.MaPhong);
                 var listPhongDatDuoc = db.Phongs.Where(m => !listDaBiDat.Contains(m.MaPhong)).Join(db.LoaiPhongs, p => p.MaLoai, lp => lp.MaLoai, (p, lp) =>
                     new PhongView
                     {
@@ -128,7 +143,7 @@ namespace QuanLyKhachSan.Controllers
                 if (Request.Form[dv.MaDichVu] == "on")
                 {
                     if (ThanhTien > 0) DichVuSuDung += ", ";
-                    DichVuSuDung += dv.TenDichVu;
+                    DichVuSuDung += $"({dv.TenDichVu} - {dv.GiaDichVu}.000)";
                     ThanhTien += (int)dv.GiaDichVu;
                 }
             }

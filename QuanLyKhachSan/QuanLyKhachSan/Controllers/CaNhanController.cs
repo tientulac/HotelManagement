@@ -229,5 +229,91 @@ namespace QuanLyKhachSan.Controllers
             return View(tk);
         }
 
+        [HttpPost]
+        public ActionResult LichSu(FilterModel req)
+        {
+            try
+            {
+                if (Session["TaiKhoan"] == null) return Redirect("DangNhap");
+                TaiKhoan taiKhoan = (TaiKhoan)Session["TaiKhoan"];
+                DateTime dateHomNay = DateTime.Now.AddDays(-1);
+                var listLichSu = db.DatPhongs.Where(dp => dp.TenTaiKhoan == taiKhoan.TenTaiKhoan).Join(db.Phongs, dp => dp.MaPhong, p => p.MaPhong, (dp, p) => new
+                {
+                    MaDatPhong = dp.MaDatPhong,
+                    TenPhong = p.TenPhong,
+                    NgayDat = dp.NgayDat,
+                    NgayDen = dp.NgayDen,
+                    NgayTra = dp.NgayTra,
+                    ThanhTien = dp.ThanhTien,
+                    DichVu = dp.DichVu,
+                    TrangThai = dp.TrangThai,
+                    PhuongThucThanhToan = dp.PhuongThucThanhToan
+                });
+                var listLsView = new List<LichSuView>();
+                if (listLichSu.Any())
+                {
+                    foreach (var m in listLichSu.ToList())
+                    {
+                        int daysCount = 1;
+                        if (m.NgayDen != null && m.NgayTra != null)
+                        {
+                            DateTime startDate = new DateTime(m.NgayDen.Value.Year, m.NgayDen.Value.Month, m.NgayDen.Value.Day);
+                            DateTime endDate = new DateTime(m.NgayTra.Value.Year, m.NgayTra.Value.Month, m.NgayTra.Value.Day);
+                            TimeSpan span = endDate - startDate;
+                            daysCount = span.Days;
+                        }
+
+                        listLsView.Add(new LichSuView
+                        {
+                            MaDatPhong = m.MaDatPhong,
+                            TenPhong = m.TenPhong,
+                            NgayDat = m.NgayDat.Value.ToString("dd/MM/yyyy"),
+                            NgayDen = m.NgayDen.Value.ToString("dd/MM/yyyy"),
+                            NgayTra = m.NgayTra.Value.ToString("dd/MM/yyyy"),
+                            DichVu = m.DichVu,
+                            ThanhTien = m.ThanhTien,
+                            CoTheHuy = m.NgayDen > dateHomNay ? true : false,
+                            TongTien = (int)(daysCount * m.ThanhTien),
+                            TrangThai = m.TrangThai.GetValueOrDefault(),
+                            NgayDatFilter = m.NgayDat,
+                            NgayDenFilter = m.NgayDen,
+                            NgayTraFilter = m.NgayTra,
+                            PhuongThucThanhToan = m.PhuongThucThanhToan.GetValueOrDefault(),
+                            PhuongThucThanhToanString = m.PhuongThucThanhToan == 0 ? "" : m.PhuongThucThanhToan == 1 ? "Thanh toán bằng tiền mặt" : "Thanh toán bằng chuyển khoản",
+                            TrangThaiString = m.TrangThai == 0 ? "Chờ thanh toán" : m.TrangThai == 1 ? "Đã thanh toán" : "Hủy đặt"
+                        });
+                    }
+                }
+                if (!String.IsNullOrEmpty(req.TenPhong))
+                {
+                    listLsView = listLsView.Where(x => x.TenPhong.ToLower().Contains(req.TenPhong.ToLower())).ToList();
+                }
+                if (req.NgayDat != null)
+                {
+                    listLsView = listLsView.Where(x => x.NgayDatFilter == req.NgayDat).ToList();
+                }
+                if (req.NgayDen != null)
+                {
+                    listLsView = listLsView.Where(x => x.NgayDenFilter == req.NgayDen).ToList();
+                }
+                if (req.NgayTra != null)
+                {
+                    listLsView = listLsView.Where(x => x.NgayTraFilter == req.NgayTra).ToList();
+                }
+                if (req.TrangThai != null)
+                {
+                    listLsView = listLsView.Where(x => x.TrangThai == req.TrangThai).ToList();
+                }
+                if (req.PhuongThucThanhToan != null)
+                {
+                    listLsView = listLsView.Where(x => x.PhuongThucThanhToan == req.PhuongThucThanhToan).ToList();
+                }
+                return Json(new { success = true, data = listLsView }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

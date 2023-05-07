@@ -78,7 +78,8 @@ namespace QuanLyKhachSan.Models.Functions
                 _phong.FirstOrDefault().ConTrong = true;
                 db.SaveChanges();
             }
-            db.DatPhongs.Remove(dbEntry);
+            dbEntry.TrangThai = 2;
+            //db.DatPhongs.Remove(dbEntry);
             db.SaveChanges();
 
             return MaDatPhong;

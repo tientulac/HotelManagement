@@ -11,54 +11,104 @@
 
 <div class="wrap-lich-su">
     @Html.Partial("_MenuTraiCaNhan")
-    @if (@Model.Count > 0)
-    {
-        foreach (LichSuView lsv in @Model)
+    <div class="khung-lich-su" style="margin-bottom: 20px;">
+        <div class="col-md-12">
+            <button style="float: right" class="btn btn-sm btn-primary" onclick="search()">Tìm kiếm</button>
+        </div>
+        <br />
+        <table class="bang-dang-ky-thanh-cong bang-dat-phong-thanh-cong">
+            <div class="col-md-4">
+                <label class="col-md-12 " style="margin-top: 10px;">Tên phòng</label>
+                <input class="form-control" placeholder="Nhập..." type="text" id="TenPhong" />
+            </div>
+            <div class="col-md-4">
+                <label class="col-md-12 " style="margin-top: 10px;">Ngày đặt</label>
+                <input class="form-control" placeholder="Nhập..." type="date" id="NgayDat" />
+            </div>
+            <div class="col-md-4">
+                <label class="col-md-12 " style="margin-top: 10px;">Ngày đến</label>
+                <input class="form-control" placeholder="Nhập..." type="date" id="NgayDen" />
+            </div>
+            <div class="col-md-4">
+                <label class="col-md-12 " style="margin-top: 10px;">Ngày trả</label>
+                <input class="form-control" placeholder="Nhập..." type="date" id="NgayTra" />
+            </div>
+            <div class="col-md-4">
+                <label class="col-md-12 " style="margin-top: 10px;">Phương thức thanh toán</label>
+                <select class="form-control" id="PhuongThucThanhToan">
+                    <option value="null">Chọn phương thức</option>
+                    <option value="1">Tiền mặt</option>
+                    <option value="2">Chuyển khoản</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="col-md-12 " style="margin-top: 10px;">Trạng thái</label>
+                <select class="form-control" id="TrangThai">
+                    <option value="null">Chọn trạng thái</option>
+                    <option value="0">Chờ thanh toán</option>
+                    <option value="1">Đã thanh toán</option>
+                    <option value="2">Đã hủy</option>
+                </select>
+            </div>
+        </table>
+    </div>
+    <div id="data">
+        @if (@Model.Count > 0)
+        {
+            foreach (LichSuView lsv in @Model)
+            {
+                <div class="khung-lich-su">
+                    <table class="bang-dang-ky-thanh-cong bang-dat-phong-thanh-cong">
+                        <colgroup>
+                            <col style="width: 40%" />
+                            <col style="width: 60%" />
+                        </colgroup>
+                        <tbody>
+                            <tr><th>Tên Phòng:</th><th><span style="color: #8A2BE2">@lsv.TenPhong</span></th></tr>
+                            <tr><th>Đặt Vào Ngày:</th><th><span style="color: #4682B4">@lsv.NgayDat</span></th></tr>
+                            <tr><th>Ở Từ Ngày:</th><th><span style="color: #669900">@lsv.NgayDen</span></th></tr>
+                            <tr><th>Đến Ngày:</th><th><span style="color: #008000">@lsv.NgayTra</span></th></tr>
+                            <tr><th>Dịch Vụ:</th><th><span style="color: #009999">@lsv.DichVu</span></th></tr>
+                            <tr><th>Giá:</th><th><span style="color: #e6004c">@lsv.ThanhTien.000 đ/ngày</span></th></tr>
+                            @if (lsv.TrangThai == 1)
+                            {
+                                <tr><th>Phương thức thanh toán:</th><th><span style="color: forestgreen">@lsv.PhuongThucThanhToanString</span></th></tr>
+                                <tr><th>Trạng thái:</th><th><span style="color: forestgreen">@lsv.TrangThaiString</span></th></tr>
+                            }
+                            @if (lsv.TrangThai == 2)
+                            {
+                                <tr><th>Phương thức thanh toán:</th><th><span style="color: forestgreen">@lsv.PhuongThucThanhToanString</span></th></tr>
+                                <tr><th>Trạng thái:</th><th><span style="color: forestgreen">@lsv.TrangThaiString</span></th></tr>
+                            }
+                            @if (lsv.TrangThai == 0)
+                            {
+                                <tr><th>Trạng thái:</th><th><span style="color: #e6004c">@lsv.TrangThaiString</span></th></tr>
+                            }
+                            <tr><th>Tổng Tiền:</th><th><span style="color: black">@lsv.TongTien.000 đ</span></th></tr>
+                        </tbody>
+                    </table>
+                    @if (lsv.CoTheHuy)
+                    {
+                        <button class="btn btn-danger" type="submit" data-toggle="modal" data-target="#myModal" onclick="myFunction('/CaNhan/XoaDatPhong/@lsv.MaDatPhong')">Hủy Đặt</button>
+                        <button class="btn btn-success" type="submit" data-toggle="modal" data-target="#paymentModal" onclick="myFunction('/CaNhan/ThanhToanNgay/@lsv.MaDatPhong')">Thanh toán ngay</button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-danger" disabled>Quá Hạn Hủy</button>
+                    }
+                </div>
+                <br />
+            }
+        }
+        else
         {
             <div class="khung-lich-su">
-                <table class="bang-dang-ky-thanh-cong bang-dat-phong-thanh-cong">
-                    <colgroup>
-                        <col style="width: 40%" />
-                        <col style="width: 60%" />
-                    </colgroup>
-                    <tbody>
-                        <tr><th>Tên Phòng:</th><th><span style="color: #8A2BE2">@lsv.TenPhong</span></th></tr>
-                        <tr><th>Đặt Vào Ngày:</th><th><span style="color: #4682B4">@lsv.NgayDat</span></th></tr>
-                        <tr><th>Ở Từ Ngày:</th><th><span style="color: #669900">@lsv.NgayDen</span></th></tr>
-                        <tr><th>Đến Ngày:</th><th><span style="color: #008000">@lsv.NgayTra</span></th></tr>
-                        <tr><th>Dịch Vụ:</th><th><span style="color: #009999">@lsv.DichVu</span></th></tr>
-                        <tr><th>Giá:</th><th><span style="color: #e6004c">@lsv.ThanhTien.000 đ/ngày</span></th></tr>
-                        @if (lsv.TrangThai > 0)
-                        {
-                            <tr><th>Phương thức thanh toán:</th><th><span style="color: forestgreen">@lsv.PhuongThucThanhToanString</span></th></tr>
-                            <tr><th>Trạng thái:</th><th><span style="color: forestgreen">@lsv.TrangThaiString</span></th></tr>
-                        }
-                        else
-                        {
-                            <tr><th>Trạng thái:</th><th><span style="color: #e6004c">@lsv.TrangThaiString</span></th></tr>
-                        }
-                        <tr><th>Tổng Tiền:</th><th><span style="color: black">@lsv.TongTien.000 đ</span></th></tr>
-                    </tbody>
-                </table>
-                @if (lsv.CoTheHuy)
-                {
-                    <button class="btn btn-danger" type="submit" data-toggle="modal" data-target="#myModal" onclick="myFunction('/CaNhan/XoaDatPhong/@lsv.MaDatPhong')">Hủy Đặt</button>
-                    <button class="btn btn-success" type="submit" data-toggle="modal" data-target="#paymentModal" onclick="myFunction('/CaNhan/ThanhToanNgay/@lsv.MaDatPhong')">Thanh toán ngay</button>
-                }
-                else
-                {
-                    <button class="btn btn-danger" disabled>Quá Hạn Hủy</button>
-                }
+                <label>Bạn Chưa Đặt Phòng Nào!</label>
             </div>
-            <br />
         }
-    }
-    else
-    {
-        <div class="khung-lich-su">
-            <label>Bạn Chưa Đặt Phòng Nào!</label>
-        </div>
-    }
+    </div>
+    <div id="dataFilter">
+    </div>
 </div>
 
 <script src="/Scripts/jquery.min.js"></script>
@@ -70,6 +120,100 @@
     }
     function btnOKClick() {
         window.location = link;
+    }
+
+    async function postData(url = '', data = {}) {
+        // Default options are marked with *
+        const response = await fetch(url, {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'same-origin', // include, *same-origin, omit
+            headers: {
+                'Content-Type': 'application/json'
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            redirect: 'follow', // manual, *follow, error
+            referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+            body: JSON.stringify(data) // body data type must match "Content-Type" header
+        });
+        return response.json(); // parses JSON response into native JavaScript objects
+    }
+
+    function renderTable(data) {
+        textHistory = '';
+        $('#dataFilter').html(`${textHistory}`);
+        if (data.length > 0)
+        {
+            for (var item of data)
+            {
+                console.log(item);
+                textHistory += `
+                    <div class="khung-lich-su">
+                    <table class="bang-dang-ky-thanh-cong bang-dat-phong-thanh-cong">
+                        <colgroup>
+                            <col style="width: 40%" />
+                            <col style="width: 60%" />
+                        </colgroup>
+                        <tbody>
+                            <tr><th>Tên Phòng:</th><th><span style="color: #8A2BE2">${item.TenPhong}</span></th></tr>
+                            <tr><th>Đặt Vào Ngày:</th><th><span style="color: #4682B4">${item.NgayDat}</span></th></tr>
+                            <tr><th>Ở Từ Ngày:</th><th><span style="color: #669900">${item.NgayDen}</span></th></tr>
+                            <tr><th>Đến Ngày:</th><th><span style="color: #008000">${item.NgayTra}</span></th></tr>
+                            <tr><th>Dịch Vụ:</th><th><span style="color: #009999">${item.DichVu}</span></th></tr>
+                            <tr><th>Giá:</th><th><span style="color: #e6004c">${item.ThanhTien}.000 đ/ngày</span></th></tr>
+                            ${item.TrangThai == 1 ?
+                                `<tr><th>Phương thức thanh toán:</th><th><span style="color: forestgreen">${item.PhuongThucThanhToanString}</span></th></tr>
+                                <tr><th>Trạng thái:</th><th><span style="color: forestgreen">${item.TrangThaiString}</span></th></tr>`
+                            : item.TrangThai == 2 ?
+                                `<tr><th>Phương thức thanh toán:</th><th><span style="color: forestgreen">${item.PhuongThucThanhToanString}</span></th></tr>
+                                <tr><th>Trạng thái:</th><th><span style="color: forestgreen">${item.TrangThaiString}</span></th></tr>`
+                            : `<tr><th>Trạng thái:</th><th><span style="color: #e6004c">${item.TrangThaiString}</span></th></tr>`
+                            }
+                            <tr><th>Tổng Tiền:</th><th><span style="color: black">${item.ThanhTien}.000 đ</span></th></tr>
+                        </tbody>
+                    </table>
+                    ${item.CoTheHuy ?
+                        `<button class="btn btn-danger" type="submit" data-toggle="modal" data-target="#myModal" onclick="myFunction('/CaNhan/XoaDatPhong/${item.MaDatPhong}')">Hủy Đặt</button>
+                        <button class="btn btn-success" type="submit" data-toggle="modal" data-target="#paymentModal" onclick="myFunction('/CaNhan/ThanhToanNgay/${item.MaDatPhong}')">Thanh toán ngay</button>`
+                    : `<button class="btn btn-danger" disabled>Quá Hạn Hủy</button>`
+                    }
+                </div>
+                <br />
+                `;
+            }
+            $('#dataFilter').html(`
+            ` + textHistory);
+        }
+        else
+        {
+            textHistory += `
+            <div class="khung-lich-su">
+                <label>Bạn Chưa Đặt Phòng Nào!</label>
+            </div>`
+        }
+    }
+
+    search = () => {
+        var req = {
+            TenPhong: $('#TenPhong').val(),
+            NgayDat: $('#NgayDat').val(),
+            NgayDen: $('#NgayDen').val(),
+            NgayTra: $('#NgayTra').val(),
+            TrangThai: $('#TrangThai').val(),
+            PhuongThucThanhToan: $('#PhuongThucThanhToan').val(),
+        }
+        postData('/CaNhan/LichSu', req)
+            .then((result) => {
+                if (result.success) {
+                    $('#data').hide();
+                    renderTable(result.data);
+                }
+                else {
+                    toastr.warning('Failed !');
+                    $('.modal').modal('hide');
+                }
+            });
     }
 </script>
 

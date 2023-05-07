@@ -457,6 +457,12 @@ namespace QuanLyKhachSan.Controllers
                               PhuongThucThanhToanString = a.PhuongThucThanhToan == 0 ? "" : a.PhuongThucThanhToan == 1 ? "Thanh toán bằng tiền mặt" : "Thanh toán bằng chuyển khoản",
                               TrangThaiString = a.TrangThai == 0 ? "Chờ thanh toán" : a.TrangThai == 1 ? "Đã thanh toán" : "Hủy đặt"
                           }).ToList();
+            foreach(var item in listKH)
+            {
+                item.NgayDatString = item.NgayDat.GetValueOrDefault().ToString("dd/MM/yyyy") ?? "";
+                item.NgayDenString = item.NgayDen.GetValueOrDefault().ToString("dd/MM/yyyy") ?? "";
+                item.NgayTraString = item.NgayTra.GetValueOrDefault().ToString("dd/MM/yyyy") ?? "";
+            }
             if (listKH.Any())
             {
                 if (!String.IsNullOrEmpty(req.TenTaiKhoan))
@@ -477,7 +483,7 @@ namespace QuanLyKhachSan.Controllers
                 }
                 if (req.NgayTra != null)
                 {
-                    listKH = listKH.Where(x => x.NgayDen == req.NgayTra).ToList();
+                    listKH = listKH.Where(x => x.NgayTra == req.NgayTra).ToList();
                 }
                 if (req.TrangThai != null)
                 {
@@ -491,12 +497,26 @@ namespace QuanLyKhachSan.Controllers
             return Json(new { success = true, data = listKH }, JsonRequestBehavior.AllowGet);
         }
 
-
         public ActionResult HuyKeHoachPhong()
         {
             var MaDatPhong = Int32.Parse(RouteData.Values["id"].ToString());
             var dp = db.DatPhongs.FirstOrDefault(x => x.MaDatPhong == MaDatPhong);
             dp.TrangThai = 2;
+            db.SaveChanges();
+            var phong = db.Phongs.FirstOrDefault(x => x.MaPhong == dp.MaPhong);
+            phong.ConTrong = true;
+            db.SaveChanges();
+            return RedirectToAction("KeHoachPhong", "Admin");
+        }
+
+        public ActionResult XacNhanThanhToan()
+        {
+            var MaDatPhong = Int32.Parse(RouteData.Values["id"].ToString());
+            var dp = db.DatPhongs.FirstOrDefault(x => x.MaDatPhong == MaDatPhong);
+            dp.TrangThai = 1;
+            db.SaveChanges();
+            var phong = db.Phongs.FirstOrDefault(x => x.MaPhong == dp.MaPhong);
+            phong.ConTrong = true;
             db.SaveChanges();
             return RedirectToAction("KeHoachPhong", "Admin");
         }
