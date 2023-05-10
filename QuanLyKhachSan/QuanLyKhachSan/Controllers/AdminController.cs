@@ -444,6 +444,8 @@ namespace QuanLyKhachSan.Controllers
             var listKH = (from a in list
                           select new DatPhongViewModel()
                           {
+                              TenPhong = db.Phongs.Where(x => x.MaPhong == a.MaPhong).FirstOrDefault().TenPhong,
+                              GiaThue = db.Phongs.Where(x => x.MaPhong == a.MaPhong).FirstOrDefault().GiaThue != null ? db.Phongs.Where(x => x.MaPhong == a.MaPhong).FirstOrDefault().GiaThue : 0,
                               MaDatPhong = a.MaDatPhong,
                               TenTaiKhoan = a.TenTaiKhoan,
                               MaPhong = a.MaPhong,
@@ -465,6 +467,10 @@ namespace QuanLyKhachSan.Controllers
             }
             if (listKH.Any())
             {
+                if (!String.IsNullOrEmpty(req.TenPhong))
+                {
+                    listKH = listKH.Where(x => x.TenPhong.ToLower().Contains(req.TenPhong.ToLower())).ToList();
+                }
                 if (!String.IsNullOrEmpty(req.TenTaiKhoan))
                 {
                     listKH = listKH.Where(x => x.TenTaiKhoan.ToLower().Contains(req.TenTaiKhoan.ToLower())).ToList();

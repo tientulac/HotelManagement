@@ -32,6 +32,10 @@
                     <input class="form-control" placeholder="Nhập..." type="text" id="MaPhong" />
                 </div>
                 <div class="col-md-3">
+                    <label class="col-md-12 " style="margin-top: 10px;">Tên phòng</label>
+                    <input class="form-control" placeholder="Nhập..." type="text" id="TenPhong" />
+                </div>
+                <div class="col-md-3">
                     <label class="col-md-12 " style="margin-top: 10px;">Ngày đặt</label>
                     <input class="form-control" placeholder="Nhập..." type="date" id="NgayDat" />
                 </div>
@@ -94,10 +98,11 @@
             </div>
             <div class="modal-body">
                 <p>Bạn có chắc chắn muốn xác nhận phòng này đã được thanh toán</p>
+                <div id="infoPayment"></div>
             </div>
             <div class="modal-footer">
                 <input type="button" style="width:70px" class="btn btn-success" data-dismiss="modal" value="Có" id="btnOK" onclick="btnOKClick()" />
-                <input type="button" style="width:70px" class="btn btn-default" data-dismiss="modal" value="Không" />
+                <input type="button" style="width:70px" class="btn btn-default" data-dismiss="modal" value="Hủy" />
             </div>
         </div>
     </div>
@@ -145,14 +150,30 @@
         </div>
     </div>
 </div>
-
 <script>
     var link;
     function myFunction(s) {
         link = s;
     }
-    function completed(s) {
-        link = s;
+    function completed(ma, thanhtien, giaphong, dichvu) {
+        let textList = '';
+        dichvu.split(',').forEach(x => {
+            textList += `<li>${x}</li>`;
+        });
+        $('#infoPayment').html(
+            `
+            <ul>
+                <h4>Dịch vụ</h4>`+
+                    textList
+                +`
+                <h4>Tiền phòng</h4>
+                <li>${giaphong}</li>
+                <h4>Tổng tiền</h4>
+                <li>${thanhtien}</li>
+            </ul>
+            `      
+        );
+        link = '/Admin/XacNhanThanhToan/' + ma;
     }
     function btnOKClick() {
         window.location = link;
@@ -170,6 +191,7 @@
                 `<tr>
                 <td>${x.TenTaiKhoan}</td>
                 <td>${x.MaPhong}</td>
+                <td>${x.TenPhong}</td>
                 <td>${x.NgayDatString}</td>
                 <td>${x.NgayDenString}</td>
                 <td>${x.NgayTraString}</td>
@@ -179,7 +201,7 @@
                 <td>${x.PhuongThucThanhToanString}</td>
                 <td><a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#myModal" onclick="myFunction('/Admin/HuyKeHoachPhong/${x.MaDatPhong}')"><i class="fa fa-trash" aria-hidden="true"></i></a>
                     <a class="btn btn-primary btn-sm" href="#" data-toggle="modal" data-target="#paymentModal" onclick="openPaymentModal('${x.DichVu}')"><i class="fa fa-edit" aria-hidden="true"></i></a>
-                    <a class="btn btn-success btn-sm" href="#" data-toggle="modal" data-target="#completedModal" onclick="completed('/Admin/XacNhanThanhToan/${x.MaDatPhong}')"><i class="fa fa-check" aria-hidden="true"></i></a>
+                    <a class="btn btn-success btn-sm" href="#" data-toggle="modal" data-target="#completedModal" onclick="completed(${x.MaDatPhong}, ${x.ThanhTien}, ${x.GiaThue}, '${x.DichVu}')"><i class="fa fa-check" aria-hidden="true"></i></a>
                 </td>
             </tr>`
         });
@@ -190,6 +212,7 @@
                         <tr>
                             <th scope="col">Tài khoản</th>
                             <th scope="col">Mã phòng</th>
+                            <th scope="col">Tên phòng</th>
                             <th scope="col">Ngày đặt</th>
                             <th scope="col">Ngày đến</th>
                             <th scope="col">Ngày trả</th>
@@ -202,8 +225,8 @@
                     </thead>
                     <tbody>
                         `+
-                            textData
-                        + `
+            textData
+            + `
                     </tbody>
                 </table>
             </div>
@@ -217,7 +240,8 @@
             NgayHuy: null,
             NgayTra: null,
             TrangThai: null,
-            PhuongThucThanhToan: null
+            PhuongThucThanhToan: null,
+            TenPhong: '',
         };
         postData('/Admin/KeHoachPhongFilter', req)
             .then((result) => {
@@ -233,6 +257,7 @@
 
     search = () => {
         var req = {
+            TenPhong: $('#TenPhong').val(),
             TenTaiKhoan: $('#TenTaiKhoan').val(),
             MaPhong: $('#MaPhong').val(),
             NgayDat: $('#NgayDat').val(),

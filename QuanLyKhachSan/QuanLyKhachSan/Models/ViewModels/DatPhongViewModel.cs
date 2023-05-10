@@ -22,5 +22,7 @@ namespace QuanLyKhachSan.Models.ViewModels
         public string NgayDatString { get; set; }
         public string NgayDenString { get; set; }
         public string NgayTraString { get; set; }
+        public string TenPhong { get; set; }
+        public int? GiaThue { get; set; }
     }
 }
