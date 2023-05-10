@@ -23,6 +23,7 @@ namespace QuanLyKhachSan.Models.Functions
 
         public string Insert(Phong model)
         {
+            model.NgayTao = DateTime.Now;
             model.ConTrong = true;
             db.Phongs.Add(model);
             db.SaveChanges();
@@ -71,9 +72,10 @@ namespace QuanLyKhachSan.Models.Functions
                             GiaThue = r.GiaThue,
                             TenLoai = s.TenLoai,
                             DuongDanAnh = s.DuongDanAnh,
-                            ConTrong = r.ConTrong
+                            ConTrong = r.ConTrong,
+                            NgayTao = r.NgayTao != null ? r.NgayTao : null
                         };
-            listPhongView = query.ToList();
+            listPhongView = query.OrderByDescending(x => x.NgayTao).ToList();
             return listPhongView;
         }
 
@@ -91,7 +93,8 @@ namespace QuanLyKhachSan.Models.Functions
                             MaLoai = r.MaLoai,
                             TenLoai = r.TenLoai,
                             DuongDanAnh = r.DuongDanAnh,
-                            ConTrong = s.ConTrong
+                            ConTrong = s.ConTrong,
+                            NgayTao = s.NgayTao != null ? s.NgayTao : null
                         };
             if (loaiTimKiem == "Diện Tích")
             {
@@ -103,7 +106,7 @@ namespace QuanLyKhachSan.Models.Functions
                 if (mucTimKiem == "<=") listPhongView = query.Where(m => m.GiaThue <= giaTriTimKiem).ToList();
                 else listPhongView = query.Where(m => m.GiaThue >= giaTriTimKiem).ToList();
             }
-            return listPhongView;
+            return listPhongView.OrderByDescending(x => x.NgayTao).ToList();
         }
 
     }

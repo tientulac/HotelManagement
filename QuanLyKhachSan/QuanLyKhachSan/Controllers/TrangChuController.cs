@@ -47,8 +47,9 @@ namespace QuanLyKhachSan.Controllers
             return View();
         }
 
-
-        // POST
-
+        public ActionResult KeHoachPhong()
+        {
+            return View();
+        }
     }
 }

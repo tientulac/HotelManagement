@@ -395,10 +395,19 @@ namespace QuanLyKhachSan.Controllers
         {
             if (ModelState.IsValid)
             {
+                var _p = db.Phongs?.Where(x => x.MaPhong == req.MaPhong)?.FirstOrDefault() ?? null;
+                if (_p != null)
+                {
+                    if (!_p.ConTrong)
+                    {
+                        return Json(new { success = false, data = req, message = "Phòng đã được đặt, không thể thêm dịch vụ" }, JsonRequestBehavior.AllowGet);
+                    }
+                }
                 db.DichVuPhongs.Add(req);
                 db.SaveChanges();
                 return Json(new { success = true, data = req }, JsonRequestBehavior.AllowGet);
             }
+            
             return Json(new { success = false, data = req }, JsonRequestBehavior.AllowGet);
         }
 
@@ -417,6 +426,7 @@ namespace QuanLyKhachSan.Controllers
                                  TenDichVu = db.DichVus.FirstOrDefault(x => x.MaDichVu.Equals(a.MaDichVu)).TenDichVu,
                                  GiaDichVu = db.DichVus.FirstOrDefault(x => x.MaDichVu.Equals(a.MaDichVu)).GiaDichVu,
                                  MaPhong = a.MaPhong,
+                                 ConTrong = db.Phongs.FirstOrDefault(x => x.MaPhong.Equals(MaPhong)).ConTrong
                              }).ToList();
             }
             return Json(new { success = true, data = listModel }, JsonRequestBehavior.AllowGet);

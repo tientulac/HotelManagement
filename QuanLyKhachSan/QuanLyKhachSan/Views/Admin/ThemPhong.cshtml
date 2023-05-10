@@ -38,7 +38,7 @@
         <div class="form-group">
             <label>Loại Phòng:</label>
             <select class="form-control dang-nhap-text admin-gia-thue" name="MaLoai">
-                @foreach (LoaiPhong lp in (List<LoaiPhong>)ViewBag.listLoaiPhong)
+                @foreach (var lp in ViewBag.listLoaiPhong)
                 {
                     <option>@lp.MaLoai</option>
                 }

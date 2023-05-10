@@ -1,6 +1,11 @@
-﻿@{
+﻿@using System;
+@using System.Globalization;
+@using System.Threading;
+
+@{
     ViewBag.Title = "DS Phòng";
     Layout = "~/Views/SharedAdmin/_Layout.cshtml";
+    Thread.CurrentThread.CurrentCulture = new CultureInfo("vn-VN", true);
 }
 
 @using QuanLyKhachSan.Models.Entities
@@ -38,7 +43,7 @@
                         <td>@p.TenPhong</td>
                         <td>@p.MaLoai</td>
                         <td>@p.DienTich</td>
-                        <td>@p.GiaThue</td>
+                        <td>@p.GiaThue.GetValueOrDefault().ToString("c")</td>
                         @if (p.ConTrong)
                         {
                             <td style="color: forestgreen; font-weight: bold">
@@ -129,7 +134,8 @@
                             <td>${x.MaDichVu}</td>
                             <td>${x.TenDichVu}</td>
                             <td>${x.GiaDichVu}</td>
-                            <td><a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#myModal" onclick="myFunction('/Admin/XoaDichVuPhong/${x.IdDichVuPhong}')"><i class="fa fa-trash" aria-hidden="true"></i></a></td>
+                            ${x.ConTrong ? `<td><a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#myModal" onclick="myFunction('/Admin/XoaDichVuPhong/${x.IdDichVuPhong}')"><i class="fa fa-trash" aria-hidden="true"></i></a></td>` : null
+                            }
                         </tr>`
                     });
                     $('#dataService').html(`
@@ -145,8 +151,8 @@
                             </thead>
                             <tbody>
                                 `+
-                                    textData
-                                + `
+                        textData
+                        + `
                             </tbody>
                         </table>
                     </div>
@@ -154,7 +160,6 @@
                 }
                 else {
                     toastr.warning('Failed !');
-                    $('.modal').modal('hide');
                 }
             }
         });
@@ -180,42 +185,45 @@
                             if (result.success) {
                                 var textData = '';
                                 result.data.forEach(x => {
-                                    textData += `<tr>
-                            <td>${x.MaDichVu}</td>
-                            <td>${x.TenDichVu}</td>
-                            <td>${x.GiaDichVu}</td>
-                            <td><a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#myModal" onclick="myFunction('/Admin/XoaDichVuPhong/${x.IdDichVuPhong}')"><i class="fa fa-trash" aria-hidden="true"></i></a></td>
-                        </tr>`
+                                    textData +=
+                                        `<tr>
+                                    <td>${x.MaDichVu}</td>
+                                    <td>${x.TenDichVu}</td>
+                                    <td>${x.GiaDichVu}</td>
+                                    `
                                 });
+                                if (!x.ConTrong) {
+                                    textData += `<td><a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#myModal" onclick="myFunction('/Admin/XoaDichVuPhong/${x.IdDichVuPhong}')"><i class="fa fa-trash" aria-hidden="true"></i></a></td>`;
+                                }
+                                textData += '</tr>'
                                 $('#dataService').html(`
-                    <div class="col-md-12" style="margin-top: 20px;">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Mã dịch vụ</th>
-                                    <th scope="col">Tên dịch vụ</th>
-                                    <th scope="col">Giá tiền (VNĐ)</th>
-                                    <th scope="col">Thao tác</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                `+
+                                    <div class="col-md-12" style="margin-top: 20px;">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Mã dịch vụ</th>
+                                                    <th scope="col">Tên dịch vụ</th>
+                                                    <th scope="col">Giá tiền (VNĐ)</th>
+                                                    <th scope="col">Thao tác</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                `+
                                     textData
                                     + `
-                            </tbody>
-                        </table>
-                    </div>
-                    `)
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                `)
                             }
                             else {
                                 toastr.warning('Failed !');
-                                $('.modal').modal('hide');
                             }
                         }
-                    });                }
+                    });
+                }
                 else {
-                    toastr.warning('Failed !');
-                    $('.modal').modal('hide');
+                    toastr.warning(data.message);
                 }
             });
     }

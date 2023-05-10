@@ -15,5 +15,6 @@ namespace QuanLyKhachSan.Models.ViewModels
         public string TenLoai { get; set; }
         public string DuongDanAnh { get; set; }
         public bool ConTrong { get; set; }
+        public DateTime? NgayTao { get; set; }
     }
 }

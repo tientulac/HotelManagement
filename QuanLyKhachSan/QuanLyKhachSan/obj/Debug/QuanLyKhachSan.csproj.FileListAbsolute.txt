@@ -131,4 +131,3 @@ F:\DoAnWeb\HotelManagement\HotelManagement\QuanLyKhachSan\QuanLyKhachSan\obj\Deb
 F:\DoAnWeb\HotelManagement\HotelManagement\QuanLyKhachSan\QuanLyKhachSan\obj\Debug\QuanLyKhachSan.csproj.CopyComplete
 F:\DoAnWeb\HotelManagement\HotelManagement\QuanLyKhachSan\QuanLyKhachSan\obj\Debug\QuanLyKhachSan.dll
 F:\DoAnWeb\HotelManagement\HotelManagement\QuanLyKhachSan\QuanLyKhachSan\obj\Debug\QuanLyKhachSan.pdb
-F:\DoAnWeb\HotelManagement\HotelManagement\QuanLyKhachSan\QuanLyKhachSan\obj\Debug\QuanLyKhachSan.csproj.AssemblyReference.cache

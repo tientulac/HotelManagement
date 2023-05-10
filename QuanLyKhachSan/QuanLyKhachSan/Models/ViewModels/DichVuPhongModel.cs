@@ -13,5 +13,6 @@ namespace QuanLyKhachSan.Models.ViewModels
         public string TenDichVu { get; set; }
         public int? GiaDichVu { get; set; }
         public string MaPhong { get; set; }
+        public bool ConTrong { get; set; }
     }
 }

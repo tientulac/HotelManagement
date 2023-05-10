@@ -6,6 +6,8 @@ using System.Web.Mvc;
 using QuanLyKhachSan.Models.Entities;
 using QuanLyKhachSan.Models.ViewModels;
 using QuanLyKhachSan.Models.Functions;
+using System.Threading;
+using System.Globalization;
 
 namespace QuanLyKhachSan.Controllers
 {
@@ -123,12 +125,13 @@ namespace QuanLyKhachSan.Controllers
             else MaDatPhong = listDatPhong.Last().MaDatPhong + 1;
             int ThanhTien = 0;
             string DichVuSuDung = "";
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("vn-VN", true);
             foreach (DichVu dv in listDV)
             {
                 if (Request.Form[dv.MaDichVu] == "on")
                 {
                     if (ThanhTien > 0) DichVuSuDung += ", ";
-                    DichVuSuDung += dv.TenDichVu;
+                    DichVuSuDung += $"{dv.TenDichVu} {dv.GiaDichVu.GetValueOrDefault().ToString("c")}";
                     ThanhTien += (int)dv.GiaDichVu;
                 }
             }
