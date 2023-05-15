@@ -24,6 +24,7 @@ namespace QuanLyKhachSan.Models.Functions
         public string Insert(Phong model)
         {
             model.ConTrong = true;
+            model.NgayTao = DateTime.Now;
             db.Phongs.Add(model);
             db.SaveChanges();
             return model.MaPhong;
@@ -71,7 +72,7 @@ namespace QuanLyKhachSan.Models.Functions
                             GiaThue = r.GiaThue,
                             TenLoai = s.TenLoai,
                             DuongDanAnh = s.DuongDanAnh,
-                            ConTrong = r.ConTrong
+                            ConTrong = r.ConTrong != null ? r.ConTrong : null
                         };
             listPhongView = query.ToList();
             return listPhongView;
@@ -91,7 +92,7 @@ namespace QuanLyKhachSan.Models.Functions
                             MaLoai = r.MaLoai,
                             TenLoai = r.TenLoai,
                             DuongDanAnh = r.DuongDanAnh,
-                            ConTrong = s.ConTrong
+                            ConTrong = s.ConTrong.GetValueOrDefault()
                         };
             if (loaiTimKiem == "Diện Tích")
             {

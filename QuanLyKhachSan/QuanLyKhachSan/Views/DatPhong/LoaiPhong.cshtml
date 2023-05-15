@@ -21,9 +21,9 @@
                 <img class="img-rounded img-phong" src=@ViewBag.DuongDanAnh alt="Image" width="250" height="149" /><br>
                 <label>Tên Phòng: @p.TenPhong</label><br />
                 <label>Diện Tích: @p.DienTich m&sup2;</label><br />
-                <label style="color:@(p.ConTrong ? "green": "red")">@(p.ConTrong ? "Còn phòng": "Phòng đã được đặt !")</label><br />
+                <label style="color:@(p.ConTrong.GetValueOrDefault() ? "green": "red")">@(p.ConTrong.GetValueOrDefault() ? "Còn phòng": "Phòng đã được đặt !")</label><br />
                 <span class="gia-thue">@p.GiaThue.000 đ/ngày</span><br />
-                @if (p.ConTrong)
+                @if (p.ConTrong.GetValueOrDefault())
                 {
                     <input type="button" class="btn-dat-phong" onclick="location.href = '/DatPhong/DatPhong/@p.MaPhong'" value="ĐẶT PHÒNG" />
 

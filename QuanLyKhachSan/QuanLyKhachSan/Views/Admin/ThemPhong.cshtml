@@ -26,19 +26,19 @@
             <span class="canh-bao">@Html.ValidationMessageFor(m => m.TenPhong)</span>
         </div>
         <div class="form-group">
-            <label>Diện Tích:</label>
+            <label>Diện Tích (m2):</label>
             <input class="form-control dang-nhap-text" type="number" name="DienTich" placeholder="Nhập Diện Tích" value="@Model.DienTich" />
             <span class="canh-bao">@Html.ValidationMessageFor(m => m.DienTich)</span>
         </div>
         <div class="form-group">
-            <label>Giá Thuê:</label>
+            <label>Giá Thuê (VNĐ):</label>
             <input class="form-control dang-nhap-text" type="number" name="GiaThue" placeholder="Nhập Giá Thuê" value="@Model.GiaThue" />
             <span class="canh-bao">@Html.ValidationMessageFor(m => m.GiaThue)</span>
         </div>
         <div class="form-group">
             <label>Loại Phòng:</label>
             <select class="form-control dang-nhap-text admin-gia-thue" name="MaLoai">
-                @foreach (LoaiPhong lp in (List<LoaiPhong>)ViewBag.listLoaiPhong)
+                @foreach (var lp in ViewBag.listLoaiPhong)
                 {
                     <option>@lp.MaLoai</option>
                 }

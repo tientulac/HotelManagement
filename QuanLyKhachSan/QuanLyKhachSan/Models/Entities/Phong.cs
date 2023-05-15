@@ -33,8 +33,9 @@
         [Required(ErrorMessage = "Không được để trống Giá Thuê")]
         public int? GiaThue { get; set; }
 
-        public bool ConTrong { get; set; }
+        public bool? ConTrong { get; set; }
 
+        public DateTime? NgayTao { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DatPhong> DatPhongs { get; set; }

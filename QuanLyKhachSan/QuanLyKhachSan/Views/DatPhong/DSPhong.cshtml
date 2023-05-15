@@ -16,9 +16,9 @@
             <label>Loại Phòng: @pv.TenLoai</label><br />
             <label>Tên Phòng: @pv.TenPhong</label><br />
             <label>Diện Tích: @pv.DienTich m&sup2;</label><br />
-            <label style="color:@(pv.ConTrong ? "green": "red")">@(pv.ConTrong ? "Còn phòng": "Phòng đã được đặt !")</label><br />
+            <label style="color:@(pv.ConTrong.GetValueOrDefault() ? "green": "red")">@(pv.ConTrong.GetValueOrDefault() ? "Còn phòng": "Phòng đã được đặt !")</label><br />
             <span class="gia-thue">@pv.GiaThue.000 đ/ngày</span><br />
-            @if (pv.ConTrong)
+            @if (pv.ConTrong.GetValueOrDefault())
             {
                 <input type="button" class="btn-dat-phong" onclick="location.href = '/DatPhong/DatPhong/@pv.MaPhong'" value="ĐẶT PHÒNG" />
 

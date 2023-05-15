@@ -4,6 +4,8 @@
 }
 
 @using QuanLyKhachSan.Models.Entities
+@using System.Threading;
+@using System.Globalization;
 @model List<Phong>
 
 <script>
@@ -28,6 +30,8 @@
         </thead>
         <tbody>
             @{
+                Thread.CurrentThread.CurrentCulture = new CultureInfo("vn-VN", true);
+
                 int stt = ViewBag.STT;
                 foreach (Phong p in Model)
                 {
@@ -38,8 +42,8 @@
                         <td>@p.TenPhong</td>
                         <td>@p.MaLoai</td>
                         <td>@p.DienTich</td>
-                        <td>@p.GiaThue</td>
-                        @if (p.ConTrong)
+                        <td>@p.GiaThue.GetValueOrDefault().ToString("c")</td>
+                        @if (p.ConTrong.GetValueOrDefault())
                         {
                             <td style="color: forestgreen; font-weight: bold">
                                 <i class="fa fa-check" aria-hidden="true"></i>
@@ -51,7 +55,7 @@
                             <td style="color: red; font-weight: bold">X</td>
 
                         }
-                        <td class="row">
+                        <td class="row" style="white-space: nowrap">
                             <a href="/Admin/SuaPhong/@p.MaPhong" class="btn btn-warning btn-sm"><i class="fa fa-pencil" aria-hidden="true"></i></a>
                             <a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#myModal" onclick="myFunction('/Admin/XoaPhong/@p.MaPhong')"><i class="fa fa-trash" aria-hidden="true"></i></a>
                             <a class="btn btn-success btn-sm" href="#" data-toggle="modal" data-target="#ServiceModal" onclick="openModalService('@p.MaPhong')"><i class="fa fa-bell-concierge"></i></a>
@@ -79,7 +83,8 @@
                             <option value="">Chọn dịch vụ</option>
                             @foreach (var s in ViewBag.ListDichVu)
                             {
-                                <option value="@s.MaDichVu">Tên: @s.TenDichVu - Giá: @s.GiaDichVu VNĐ</option>
+                                Thread.CurrentThread.CurrentCulture = new CultureInfo("vn-VN", true);
+                                <option value="@s.MaDichVu">Tên: @s.TenDichVu - Giá: @s.GiaDichVu.ToString("c") VNĐ</option>
                             }
                         </select>
                     </div>
@@ -128,7 +133,7 @@
                         textData += `<tr>
                             <td>${x.MaDichVu}</td>
                             <td>${x.TenDichVu}</td>
-                            <td>${x.GiaDichVu}</td>
+                            <td>${x.GiaDichVu.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')} VNĐ</td>
                             <td><a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#myModal" onclick="myFunction('/Admin/XoaDichVuPhong/${x.IdDichVuPhong}')"><i class="fa fa-trash" aria-hidden="true"></i></a></td>
                         </tr>`
                     });
@@ -145,8 +150,8 @@
                             </thead>
                             <tbody>
                                 `+
-                                    textData
-                                + `
+                        textData
+                        + `
                             </tbody>
                         </table>
                     </div>
@@ -163,6 +168,7 @@
     openModalService = (ma) => {
         ma_phong = ma;
         getDataService();
+        $('#serviceSelected').val('')
     }
 
     addService = () => {
@@ -212,7 +218,8 @@
                                 $('.modal').modal('hide');
                             }
                         }
-                    });                }
+                    });
+                }
                 else {
                     toastr.warning('Failed !');
                     $('.modal').modal('hide');

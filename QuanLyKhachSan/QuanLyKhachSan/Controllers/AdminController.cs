@@ -65,7 +65,7 @@ namespace QuanLyKhachSan.Controllers
         [Authorize]
         public ActionResult DSPhong()
         {
-            var list = db.Phongs.ToList();
+            var list = db.Phongs.OrderByDescending(x => x.NgayTao).ToList();
             int TongPhanTu = list.Count;
             int SoTrang = (TongPhanTu - 1) / MaxPhanTuMoiTrang + 1;
             int Trang = 1;
@@ -457,7 +457,8 @@ namespace QuanLyKhachSan.Controllers
                               TrangThai = a.TrangThai,
                               PhuongThucThanhToan = a.PhuongThucThanhToan,
                               PhuongThucThanhToanString = a.PhuongThucThanhToan == 0 ? "" : a.PhuongThucThanhToan == 1 ? "Thanh toán bằng tiền mặt" : "Thanh toán bằng chuyển khoản",
-                              TrangThaiString = a.TrangThai == 0 ? "Chờ thanh toán" : a.TrangThai == 1 ? "Đã thanh toán" : "Hủy đặt"
+                              TrangThaiString = a.TrangThai == 0 ? "Chờ thanh toán" : a.TrangThai == 1 ? "Đã thanh toán" : "Hủy đặt",
+                              HoTen = db.TaiKhoans.FirstOrDefault(x => x.TenTaiKhoan.Equals(a.TenTaiKhoan)).HoTen
                           }).ToList();
             foreach(var item in listKH)
             {
@@ -518,13 +519,52 @@ namespace QuanLyKhachSan.Controllers
         public ActionResult XacNhanThanhToan()
         {
             var MaDatPhong = Int32.Parse(RouteData.Values["id"].ToString());
+            var type = Int32.Parse(RouteData.Values["param"].ToString());
             var dp = db.DatPhongs.FirstOrDefault(x => x.MaDatPhong == MaDatPhong);
             dp.TrangThai = 1;
+            dp.PhuongThucThanhToan = type;
             db.SaveChanges();
             var phong = db.Phongs.FirstOrDefault(x => x.MaPhong == dp.MaPhong);
-            phong.ConTrong = true;
+            phong.ConTrong = false;
             db.SaveChanges();
-            return RedirectToAction("KeHoachPhong", "Admin");
+            return RedirectToAction("ThanhToan", "Admin");
+        }
+
+        public ActionResult ThanhToan()
+        {
+            var listKH = db.DatPhongs.ToList();
+            ViewBag.ListKH = listKH;
+            return View();
+        }
+
+
+        public ActionResult ThanhToanFilter(string ten_phong)
+        {
+            var list = db.DatPhongs;
+            var listKH = (from a in list
+                          select new DatPhongViewModel()
+                          {
+                              TenPhong = db.Phongs.Where(x => x.MaPhong == a.MaPhong).FirstOrDefault().TenPhong,
+                              GiaThue = db.Phongs.Where(x => x.MaPhong == a.MaPhong).FirstOrDefault().GiaThue != null ? db.Phongs.Where(x => x.MaPhong == a.MaPhong).FirstOrDefault().GiaThue : 0,
+                              MaDatPhong = a.MaDatPhong,
+                              TenTaiKhoan = a.TenTaiKhoan,
+                              MaPhong = a.MaPhong,
+                              NgayDat = a.NgayDat,
+                              NgayDen = a.NgayDen,
+                              NgayTra = a.NgayTra,
+                              DichVu = a.DichVu,
+                              ThanhTien = a.ThanhTien,
+                              TrangThai = a.TrangThai,
+                              PhuongThucThanhToan = a.PhuongThucThanhToan,
+                              PhuongThucThanhToanString = a.PhuongThucThanhToan == 0 ? "" : a.PhuongThucThanhToan == 1 ? "Thanh toán bằng tiền mặt" : "Thanh toán bằng chuyển khoản",
+                              TrangThaiString = a.TrangThai == 0 ? "Chờ thanh toán" : a.TrangThai == 1 ? "Đã thanh toán" : "Hủy đặt",
+                              HoTen = db.TaiKhoans.FirstOrDefault(x => x.TenTaiKhoan.Equals(a.TenTaiKhoan)).HoTen
+                          }).ToList();
+            if (!string.IsNullOrEmpty(ten_phong))
+            {
+                listKH = listKH.Where(x => x.TenPhong.ToLower().Contains(ten_phong.ToLower())).ToList();
+            }
+            return Json(new { success = true, data = listKH }, JsonRequestBehavior.AllowGet);
         }
     }
 }
