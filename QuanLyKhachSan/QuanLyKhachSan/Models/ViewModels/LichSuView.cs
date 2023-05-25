@@ -21,6 +21,8 @@ namespace QuanLyKhachSan.Models.ViewModels
         public int TrangThai { get; set; }
         public string TrangThaiString { get; set; }
         public DateTime? NgayDatFilter { get; set; }
+        public string NgayDenInput { get; set; }
+        public string NgayTraInput { get; set; }
         public DateTime? NgayDenFilter { get; set; }
         public DateTime? NgayTraFilter { get; set; }
     }

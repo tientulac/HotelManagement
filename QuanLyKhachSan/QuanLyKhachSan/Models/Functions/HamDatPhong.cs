@@ -43,7 +43,7 @@ namespace QuanLyKhachSan.Models.Functions
             dbEntry.NgayTra = model.NgayTra;
             dbEntry.ThanhTien = model.ThanhTien;
             dbEntry.TrangThai = 1;
-            dbEntry.PhuongThucThanhToan = 1;
+            dbEntry.PhuongThucThanhToan = 2;
             db.SaveChanges();
             return model.MaDatPhong;
         }

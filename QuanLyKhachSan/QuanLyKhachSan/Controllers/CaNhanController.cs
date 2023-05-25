@@ -84,6 +84,8 @@ namespace QuanLyKhachSan.Controllers
                         listLsView.Add(new LichSuView
                         {
                             MaDatPhong = m.MaDatPhong,
+                            NgayDenInput = m.NgayDen.Value.ToString("yyyy-MM-dd"),
+                            NgayTraInput = m.NgayTra.Value.ToString("yyyy-MM-dd"),
                             TenPhong = m.TenPhong,
                             NgayDat = m.NgayDat.Value.ToString("dd/MM/yyyy"),
                             NgayDen = m.NgayDen.Value.ToString("dd/MM/yyyy"),
@@ -99,7 +101,7 @@ namespace QuanLyKhachSan.Controllers
                         });
                     }
                 }
-                return View(listLsView);
+                return View(listLsView.OrderByDescending(x => x.NgayDat).ToList());
             }
             catch (Exception ex)
             {
@@ -270,6 +272,8 @@ namespace QuanLyKhachSan.Controllers
                             NgayDat = m.NgayDat.Value.ToString("dd/MM/yyyy"),
                             NgayDen = m.NgayDen.Value.ToString("dd/MM/yyyy"),
                             NgayTra = m.NgayTra.Value.ToString("dd/MM/yyyy"),
+                            NgayDenInput = m.NgayDen.Value.ToString("yyyy-MM-dd"),
+                            NgayTraInput = m.NgayTra.Value.ToString("yyyy-MM-dd"),
                             DichVu = m.DichVu,
                             ThanhTien = m.ThanhTien,
                             CoTheHuy = m.NgayDen > dateHomNay ? true : false,
@@ -308,7 +312,29 @@ namespace QuanLyKhachSan.Controllers
                 {
                     listLsView = listLsView.Where(x => x.PhuongThucThanhToan == req.PhuongThucThanhToan).ToList();
                 }
-                return Json(new { success = true, data = listLsView }, JsonRequestBehavior.AllowGet);
+                return Json(new { success = true, data = listLsView.OrderByDescending(x => x.NgayDat).ToList() }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        [HttpPost]
+        public ActionResult ThayDoiNgay(DatPhong req)
+        {
+            try
+            {
+                var _dp = db.DatPhongs.FirstOrDefault(x => x.MaDatPhong == req.MaDatPhong);
+                if (_dp != null)
+                {
+                    _dp.NgayDen = req.NgayDen;
+                    _dp.NgayTra = req.NgayTra;
+                    db.SaveChanges();
+                    return Json(new { success = true, data = req }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(new { success = false, data = "" }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {

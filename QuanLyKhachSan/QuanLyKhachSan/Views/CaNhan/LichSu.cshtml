@@ -64,10 +64,22 @@
                             <col style="width: 60%" />
                         </colgroup>
                         <tbody>
+                            @if (lsv.TrangThai != 2 && lsv.CoTheHuy)
+                            {
+                                <button class="btn btn-primary" onclick="saveChangeDate('@lsv.MaDatPhong')">Lưu</button>
+                            }
                             <tr><th>Tên Phòng:</th><th><span style="color: #8A2BE2">@lsv.TenPhong</span></th></tr>
                             <tr><th>Đặt Vào Ngày:</th><th><span style="color: #4682B4">@lsv.NgayDat</span></th></tr>
-                            <tr><th>Ở Từ Ngày:</th><th><span style="color: #669900">@lsv.NgayDen</span></th></tr>
-                            <tr><th>Đến Ngày:</th><th><span style="color: #008000">@lsv.NgayTra</span></th></tr>
+                            @if (lsv.TrangThai != 2 && lsv.CoTheHuy)
+                            {
+                                <tr><th>Ở Từ Ngày:</th><th><span style="color: #669900"><input type="date" id="start_date" value="@lsv.NgayDenInput" /></span></th></tr>
+                                <tr><th>Đến Ngày:</th><th><span style="color: #008000"><input type="date" id="end_date" value="@lsv.NgayTraInput" /></span></th></tr>
+                            }
+                            else
+                            {
+                                <tr><th>Ở Từ Ngày:</th><th><span style="color: #669900">@lsv.NgayDen</span></th></tr>
+                                <tr><th>Đến Ngày:</th><th><span style="color: #008000">@lsv.NgayTra</span></th></tr>
+                            }
                             <tr><th>Dịch Vụ:</th><th><span style="color: #009999">@lsv.DichVu</span></th></tr>
                             <tr><th>Giá:</th><th><span style="color: #e6004c">@lsv.ThanhTien.000 đ/ngày</span></th></tr>
                             @if (lsv.TrangThai == 1)
@@ -87,14 +99,21 @@
                             <tr><th>Tổng Tiền:</th><th><span style="color: black">@lsv.TongTien.000 đ</span></th></tr>
                         </tbody>
                     </table>
-                    @if (lsv.CoTheHuy)
+                    @if (lsv.TrangThai == 2)
                     {
-                        <button class="btn btn-danger" type="submit" data-toggle="modal" data-target="#myModal" onclick="myFunction('/CaNhan/XoaDatPhong/@lsv.MaDatPhong')">Hủy Đặt</button>
-                        <button class="btn btn-success" type="submit" data-toggle="modal" data-target="#paymentModal" onclick="myFunction('/CaNhan/ThanhToanNgay/@lsv.MaDatPhong')">Thanh toán ngay</button>
+                        <button class="btn btn-danger" disabled>Phòng đã được hủy. Không thể thanh toán</button>
                     }
                     else
                     {
-                        <button class="btn btn-danger" disabled>Quá Hạn Hủy</button>
+                        if (lsv.CoTheHuy)
+                        {
+                            <button class="btn btn-danger" type="submit" data-toggle="modal" data-target="#myModal" onclick="myFunction('/CaNhan/XoaDatPhong/@lsv.MaDatPhong')">Hủy Đặt</button>
+                            <button class="btn btn-success" type="submit" data-toggle="modal" data-target="#paymentModal" onclick="myFunction('/CaNhan/ThanhToanNgay/@lsv.MaDatPhong')">Thanh toán ngay</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-danger" disabled>Quá Hạn Hủy</button>
+                        }
                     }
                 </div>
                 <br />
@@ -143,11 +162,28 @@
     function renderTable(data) {
         textHistory = '';
         $('#dataFilter').html(`${textHistory}`);
-        if (data.length > 0)
-        {
-            for (var item of data)
-            {
-                console.log(item);
+        if (data.length > 0) {
+            for (var item of data) {
+                var btnSave = ``;
+                var dateBooking = ``;
+                if (item.TrangThai != 2 && item.CoTheHuy) {
+                    btnSave = `<button class="btn btn-primary" onclick="saveChangeDate(${item.MaDatPhong})">Lưu</button>`;
+                    dateBooking = `
+                        <tr><th>Ở Từ Ngày:</th><th><span style="color: #669900"><input type="date" id="start_date" value="${item.NgayDenInput}" /></span></th></tr>
+                        <tr><th>Đến Ngày:</th><th><span style="color: #008000"><input type="date" id="end_date" value="${item.NgayTraInput}" /></span></th></tr>`;
+                    console.log(item.NgayDenInput);
+                }
+                else {
+                    dateBooking = `<tr><th>Đặt Vào Ngày:</th><th><span style="color: #4682B4" id="start_date" value="${item.NgayDat}">${item.NgayDat}</span></th></tr>
+                            <tr><th>Ở Từ Ngày:</th><th><span style="color: #669900" id="end_date" value="${item.NgayDen}">${item.NgayDen}</span></th></tr>`
+                }
+                var listButtonText = item.CoTheHuy ?
+                    `<button class="btn btn-danger" type="submit" data-toggle="modal" data-target="#myModal" onclick="myFunction('/CaNhan/XoaDatPhong/${item.MaDatPhong}')">Hủy Đặt</button>
+                        <button class="btn btn-success" type="submit" data-toggle="modal" data-target="#paymentModal" onclick="myFunction('/CaNhan/ThanhToanNgay/${item.MaDatPhong}')">Thanh toán ngay</button>`
+                    : `<button class="btn btn-danger" disabled>Quá Hạn Hủy</button>`;
+                if (item.TrangThai == 2) {
+                    listButtonText = `<button class="btn btn-danger" disabled>Phòng đã được hủy. Không thể thanh toán</button>`
+                }
                 textHistory += `
                     <div class="khung-lich-su">
                     <table class="bang-dang-ky-thanh-cong bang-dat-phong-thanh-cong">
@@ -156,28 +192,24 @@
                             <col style="width: 60%" />
                         </colgroup>
                         <tbody>
+                            `+ btnSave +`
                             <tr><th>Tên Phòng:</th><th><span style="color: #8A2BE2">${item.TenPhong}</span></th></tr>
-                            <tr><th>Đặt Vào Ngày:</th><th><span style="color: #4682B4">${item.NgayDat}</span></th></tr>
-                            <tr><th>Ở Từ Ngày:</th><th><span style="color: #669900">${item.NgayDen}</span></th></tr>
+                            `+ dateBooking +`
                             <tr><th>Đến Ngày:</th><th><span style="color: #008000">${item.NgayTra}</span></th></tr>
                             <tr><th>Dịch Vụ:</th><th><span style="color: #009999">${item.DichVu}</span></th></tr>
                             <tr><th>Giá:</th><th><span style="color: #e6004c">${item.ThanhTien}.000 đ/ngày</span></th></tr>
                             ${item.TrangThai == 1 ?
-                                `<tr><th>Phương thức thanh toán:</th><th><span style="color: forestgreen">${item.PhuongThucThanhToanString}</span></th></tr>
+                        `<tr><th>Phương thức thanh toán:</th><th><span style="color: forestgreen">${item.PhuongThucThanhToanString}</span></th></tr>
                                 <tr><th>Trạng thái:</th><th><span style="color: forestgreen">${item.TrangThaiString}</span></th></tr>`
-                            : item.TrangThai == 2 ?
-                                `<tr><th>Phương thức thanh toán:</th><th><span style="color: forestgreen">${item.PhuongThucThanhToanString}</span></th></tr>
+                        : item.TrangThai == 2 ?
+                            `<tr><th>Phương thức thanh toán:</th><th><span style="color: forestgreen">${item.PhuongThucThanhToanString}</span></th></tr>
                                 <tr><th>Trạng thái:</th><th><span style="color: forestgreen">${item.TrangThaiString}</span></th></tr>`
                             : `<tr><th>Trạng thái:</th><th><span style="color: #e6004c">${item.TrangThaiString}</span></th></tr>`
-                            }
-                            <tr><th>Tổng Tiền:</th><th><span style="color: black">${item.ThanhTien}.000 đ</span></th></tr>
+                    }
+                            <tr><th>Tổng Tiền:</th><th><span style="color: black">${item.TongTien}.000 đ</span></th></tr>
                         </tbody>
                     </table>
-                    ${item.CoTheHuy ?
-                        `<button class="btn btn-danger" type="submit" data-toggle="modal" data-target="#myModal" onclick="myFunction('/CaNhan/XoaDatPhong/${item.MaDatPhong}')">Hủy Đặt</button>
-                        <button class="btn btn-success" type="submit" data-toggle="modal" data-target="#paymentModal" onclick="myFunction('/CaNhan/ThanhToanNgay/${item.MaDatPhong}')">Thanh toán ngay</button>`
-                    : `<button class="btn btn-danger" disabled>Quá Hạn Hủy</button>`
-                    }
+                    ${listButtonText}
                 </div>
                 <br />
                 `;
@@ -185,8 +217,7 @@
             $('#dataFilter').html(`
             ` + textHistory);
         }
-        else
-        {
+        else {
             textHistory += `
             <div class="khung-lich-su">
                 <label>Bạn Chưa Đặt Phòng Nào!</label>
@@ -208,6 +239,25 @@
                 if (result.success) {
                     $('#data').hide();
                     renderTable(result.data);
+                }
+                else {
+                    toastr.warning('Failed !');
+                    $('.modal').modal('hide');
+                }
+            });
+    }
+
+    saveChangeDate = (ma) => {
+        var req = {
+            MaDatPhong: ma,
+            NgayDen: $('#start_date').val(),
+            NgayTra: $('#end_date').val(),
+        }
+        postData('/CaNhan/ThayDoiNgay', req)
+            .then((result) => {
+                if (result.success) {
+                    $("#modalThayDoiNgay").modal({ show: true });
+                    search();
                 }
                 else {
                     toastr.warning('Failed !');
@@ -248,6 +298,23 @@
             <div class="modal-footer">
                 <input type="button" style="width:70px" class="btn btn-success" data-dismiss="modal" value="OK" id="btnOK" onclick="btnOKClick()" />
                 <input type="button" style="width:70px" class="btn btn-default" data-dismiss="modal" value="Hủy bỏ" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalThayDoiNgay" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Thông Báo</h4>
+            </div>
+            <div class="modal-body">
+                <p>Thay đổi ngày thành công!</p>
+            </div>
+            <div class="modal-footer" style="text-align: center">
+                <input type="button" style="width:70px" class="btn btn-success" data-dismiss="modal" value="OK" />
             </div>
         </div>
     </div>
